@@ -1,0 +1,95 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+const String forwardUrl = "http://s-m.com.sa/f.html";
+const String backwardUrl = "http://s-m.com.sa/b.html";
+const String rightUrl = "http://s-m.com.sa/r.html";
+const String leftUrl = "http://s-m.com.sa/l.html";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  pinMode(25, OUTPUT);
+  pinMode(33, OUTPUT);
+  pinMode(32, OUTPUT);
+  pinMode(35, OUTPUT);
+
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.print("OK! IP=");
+  Serial.println(WiFi.localIP());
+
+  Serial.println("Ready");
+}
+
+void loop() {
+  HTTPClient http;
+  int httpResponseCode;
+
+  // Send HTTP GET request to forward URL
+  http.begin(forwardUrl);
+  httpResponseCode = http.GET();
+
+  if (httpResponseCode == 200) {
+    Serial.println("Forward command sent");
+    digitalWrite(25, HIGH);
+  } else {
+    Serial.print("Error sending forward command: ");
+    Serial.println(httpResponseCode);
+  }
+  
+  http.end();
+  delay(1000);
+
+  // Send HTTP GET request to backward URL
+  http.begin(backwardUrl);
+  httpResponseCode = http.GET();
+
+  if (httpResponseCode == 200) {
+    Serial.println("Backward command sent");
+    digitalWrite(32, HIGH);
+  } else {
+    Serial.print("Error sending backward command: ");
+    Serial.println(httpResponseCode);
+  }
+
+  http.end();
+  delay(1000);
+
+  // Send HTTP GET request to right URL
+  http.begin(rightUrl);
+  httpResponseCode = http.GET();
+
+  if (httpResponseCode == 200) {
+    Serial.println("Right command sent");
+    digitalWrite(33, HIGH);
+  } else {
+    Serial.print("Error sending right command: ");
+    Serial.println(httpResponseCode);
+  }
+
+  http.end();
+  delay(1000);
+
+  // Send HTTP GET request to left URL
+  http.begin(leftUrl);
+  httpResponseCode = http.GET();
+
+  if (httpResponseCode == 200) {
+    Serial.println("Left command sent");
+    digitalWrite(35, HIGH);
+  } else {
+    Serial.print("Error sending left command: ");
+    Serial.println(httpResponseCode);
+  }
+
+  http.end();
+  delay(1000);
+}

@@ -1,0 +1,61 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+const String url = "http://s-m.com.sa/r.html";
+String payload = "";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  pinMode(25, OUTPUT);
+  pinMode(33, OUTPUT);
+  pinMode(32, OUTPUT);
+  pinMode(35, OUTPUT);
+
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.print("OK! IP=");
+  Serial.println(WiFi.localIP());
+
+  Serial.print("Fetching " + url + "... ");
+}
+
+void loop() {
+  HTTPClient http;
+  http.begin(url);
+  int httpResponseCode = http.GET();
+
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP ");
+    Serial.println(httpResponseCode);
+
+    payload = http.getString();
+    Serial.println();
+    Serial.println(payload);
+
+    if (payload == "forward") {
+      digitalWrite(25, HIGH);
+    } else if (payload == "Right") {
+      digitalWrite(33, HIGH);
+    } else if (payload == "Backward") {
+      digitalWrite(32, HIGH);
+    } else if (payload == "Left") {
+      digitalWrite(35, HIGH);
+    }
+  } else {
+    Serial.print("Error code: ");
+    Serial.println(httpResponseCode);
+    Serial.println(":-(");
+  }
+  
+  http.end();
+
+  delay(1000);
+}
