@@ -4,7 +4,7 @@ Click on ESP32 In the "Circuit" tab, click on the "Add four Components from "LED
 
 ledPin1 = 25;
 
-ledPin2 = 5;
+ledPin2 = 26;
 
 ledPin3 = 32;
 
